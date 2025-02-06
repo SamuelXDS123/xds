@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPX XDS Telha Norte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <style>
+        /* Estilos do corpo */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0e0033, #ff9800);
+            color: #333;
+            position: relative; /* Para posicionar o logout */
+        }
+        /* Estilos do cabeçalho */
+        header {
+            background-color: #020736;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        header img {
+            width: 140px;
+            height: auto;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #ffffff;
+        }
+
+        /* Estilos do logout e usuário */
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logout-button {
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        .logout-button:hover {
+            background-color: #cc5200;
+            transform: scale(1.05);
+        }
+        
+        /* Estilos de navegação */
+        .nav-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: #fa1d19;
+            padding: 10px;
+        }
+        nav {
+            display: inline-block;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 4px;
+            background-color: #e53935;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        nav a:hover {
+            background-color: #c62828;
+            transform: scale(1.05);
+        }
+        nav a.active {
+            background-color: #ffffff;
+            color: #e53935;
+        }
+
+        /* Estilos de seção */
+        section {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        /* Estilos das abas */
+        section > div {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            margin-bottom: 20px;
+        }
+        section > div.active {
+            display: block;
+        } 
+        /* Estilos de tabelas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e53935;
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+            position: sticky; /* Torna o cabeçalho fixo */
+            top: 0; /* Fixa o cabeçalho no topo ao rolar */
+            z-index: 1; /* Garante que o cabeçalho fique acima do conteúdo */
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5; /* Adiciona um fundo ao passar o mouse */
+        }
+
+        .table-container {
+            max-height: 300px; /* Limita a altura da tabela */
+            overflow-y: auto; /* Permite rolagem vertical */
+            overflow-x: auto; /* Permite rolagem horizontal */
+            width: 100%; /* Garante que ocupa toda a largura disponível */
+            border: 1px solid #ddd; /* Para destacar o contêiner */
+            border-radius: 4px; /* Para bordas arredondadas */
+        }
+
+        /* Estilos de botões */
+        button {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background-color: #c62828;
+            transform: scale(1.05);
+        }
+        /* Estilos de mensagens de upload */
+        #upload-message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #e53935;
+        }
+        /* Estilos de barras de pesquisa */
+        .search-bar, .date-input, .input-group input {
+            margin: 0 10px 10px 0;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: calc(50% - 30px);
+        }
+        /* Estilos para títulos */
+        h2 {
+            border-bottom: 2px solid #e53935;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #e53935;
+        }
+        /* Estilos para a tabela de protocolos */
+        #protocolo-tabela td {
+            background-color: #ffffff; /* Fundo branco */
+        }
+        #protocolo-tabela td:hover {
+            background-color: #c80000; /* Vermelho escuro ao passar o mouse */
+        }
+        /* Estilos para piscar */
+        @keyframes blink-green {
+            0% { background-color: #e0f7e0; }
+            50% { background-color: #b2ffb2; }
+            100% { background-color: #e0f7e0; }
+        }
+        @keyframes blink-red {
+            0% { background-color: #ffe0e0; }
+            50% { background-color: #ffb2b2; }
+            100% { background-color: #ffe0e0; }
+        }
+        @keyframes blink-dark-red {
+            0% { background-color: #7f0000; }
+            50% { background-color: #b30000; }
+            100% { background-color: #7f0000; }
+        }
+        @keyframes blink-blue {
+            0% { background-color: #e0e0ff; }
+            50% { background-color: #b2b2ff; }
+            100% { background-color: #e0e0ff; }
+        }
+        @keyframes blink-yellow {
+            0% { background-color: #fff8e0; }
+            50% { background-color: #ffeb3b; }
+            100% { background-color: #fff8e0; }
+        }
+        .blinking-green {
+            animation: blink-green 10s infinite;
+        }
+        .blinking-red {
+            animation: blink-red 1s infinite;
+        }
+        .blinking-dark-red {
+            animation: blink-dark-red 1s infinite;
+        }
+        .blinking-blue {
+            animation: blink-blue 1s infinite;
+        }
+        .blinking-yellow {
+            animation: blink-yellow 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo-telha-norte.png" alt="Telha Norte Logo">
+        <h1>XDS-Telha Norte</h1>
+        <div class="user-info" id="user-info">
+            <span id="username-display"></span>
+            <button class="logout-button" id="logout-button">Logout</button>
+        </div>
+    </header>
+    <div class="nav-container">
+        <nav>
+            <a href="#" id="tab-entrada" class="active">Entrada</a>
+            <a href="#" id="tab-carregamento">Carregamento</a>
+            <a href="#" id="tab-inventario">Inventário</a>
+            <a href="#" id="tab-retorno">Retorno</a>
+            <a href="#" id="tab-historico">Histórico</a>
+            <a href="#" id="tab-base-dados">Base de Dados</a>
+            <a href="#" id="tab-adicional">Adicional</a>
+            <a href="#" id="tab-protocolo">Protocolo</a>
+            <a href="#" id="tab-cadastro">Cadastro</a>
+            <a href="#" id="tab-financeiro">Financeiro</a>
+            <a href="#" id="tab-fretes">Fretes</a>
+            <a href="#" id="tab-devolucao">Devolução</a>
+            <a href="#" id="tab-despesas">Despesas</a> 
+        </nav>
+    </div>
+    <section>
+        <div id="entrada" class="active">
+            <h2>Entrada</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-entrada" class="search-bar" placeholder="Pesquisar na tabela de entrada..." />
+                <input type="date" id="data-inicial-entrada" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-entrada" class="date-input" placeholder="Data Final" />
+            </div>
+            <div class="input-group">
+                <input type="text" id="chave-acesso" placeholder="Digite a Chave de Acesso">
+                <button id="adicionar-entrada">Adicionar Entrada</button>
+            </div>
+            <div class="table-container">
+                <table id="entrada-table">
+                    <thead>
+                        <tr>
+                            <th>Chave NF-e</th>
+                            <th>Nota Fiscal</th>
+                            <th>Carga</th>
+                            <th>Destinatário</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas serão adicionadas dinamicamente -->
+                    </tbody>
+                </table>
+            </div>            
+        </div>        
+        <div id="carregamento">
+            <h2>Carregamento</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-carregamento" class="search-bar" placeholder="Pesquisar na tabela de carregamento..." />
+                <input type="date" id="data-inicial-carregamento" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-carregamento" class="date-input" placeholder="Data Final" />
+            </div>
+            <input type="text" id="chave-acesso-carregamento" class="search-bar" placeholder="Digite a Chave de Acesso" />
+            <button id="adicionar-saida">Adicionar Saída</button>
+            <table id="carregamento-table">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Carga</th>
+                        <th>Motorista</th>
+                        <th>Destinatário</th>
+                        <th>Data de Saída</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>        
+        <div id="inventario">
+            <h2>Inventário</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-inventario" class="search-bar" placeholder="Pesquisar nesta aba..." />
+                <input type="date" id="data-inicial-inventario" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-inventario" class="date-input" placeholder="Data Final" />
+            </div>
+            <table id="inventario-table">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Nota Fiscal</th>
+                        <th>Carga</th>
+                        <th>Destinatário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="retorno">
+            <h2>Retorno</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-retorno" class="search-bar" placeholder="Pesquisar nesta aba..." />
+                <input type="date" id="data-inicial-retorno" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-retorno" class="date-input" placeholder="Data Final" />
+            </div>
+            <input type="text" id="chave-acesso-retorno" placeholder="Digite a Chave de Acesso" class="search-bar" />
+            <button id="adicionar-retono">Adicionar Retorno</button>
+            <table id="retorno-table">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Carga</th>
+                        <th>Nota Fiscal</th>
+                        <th>Destinatário</th>
+                        <th>Data de Saída</th>
+                        <th>Motorista</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>        
+        <div id="historico">
+            <h2>Histórico</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-historico" class="search-bar" placeholder="Pesquisar nesta aba..." />
+                <input type="date" id="data-inicial-historico" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-historico" class="date-input" placeholder="Data Final" />
+            </div>
+            <table id="historico-table">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Carga</th>
+                        <th>Motorista</th>
+                        <th>Destinatário</th>
+                        <th>Data de Saída</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>        
+        <div id="base-dados">
+            <h2>Base de Dados</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-base-dados" class="search-bar" placeholder="Pesquisar nesta aba..." />
+            </div>
+            <form id="upload-form">
+                <label for="file-input" style="color: #000000;">Importar planilha:</label>
+                <input type="file" id="file-input" accept=".xlsx, .xls">
+                <button type="button" id="carregar-planilha">Carregar Planilha</button>
+            </form>
+            <div id="upload-message"></div>
+            <div class="table-container">
+                <table id="dados-tabela">
+                    <thead>
+                        <tr>
+                            <th>Chave NF-e</th>
+                            <th>Nota Fiscal</th>
+                            <th>Carga</th>
+                            <th>Destinatário</th>
+                            <th>Previsão de Entrega</th>
+                            <th>Telefone</th>
+                            <th>Peso</th>
+                            <th>Destino</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados serão adicionados dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="adicional">
+            <h2>Adicional</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-adicional" class="search-bar" placeholder="Pesquisar nesta aba..." />
+            </div>
+            <table id="adicional-table">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Carga</th>
+                        <th>Nota Fiscal</th>
+                        <th>Destinatário</th>
+                        <th>Data</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="protocolo">
+            <h2>Protocolo</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-protocolo" class="search-bar" placeholder="Pesquisar nesta aba..." />
+                <input type="date" id="data-inicial-protocolo" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-protocolo" class="date-input" placeholder="Data Final" />
+            </div>
+            <p>Gere um PDF com os detalhes do protocolo.</p>
+            <table id="protocolo-tabela">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Protocolo</th>
+                        <th>Motorista</th>
+                        <th>Veículo</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12345</td>
+                        <td>Protocolo 1</td>
+                        <td>João Silva</td>
+                        <td></td>
+                        <td>16/01/2025</td>
+                        <td>10:30</td>
+                    </tr>
+                    <tr>
+                        <td>67890</td>
+                        <td>Protocolo 2</td>
+                        <td>Maria Oliveira</td>
+                        <td>XYZ-5678</td>
+                        <td>16/01/2025</td>
+                        <td>11:00</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="button-group">
+                <button type="button" id="gerar-pdf">Gerar PDF</button>
+            </div>
+        </div>
+        <div id="cadastro">
+            <h2>Cadastro</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-cadastro" class="search-bar" placeholder="Pesquisar nesta aba..." />
+            </div>
+            <div class="input-group">
+                <input type="text" id="nome-cadastro" placeholder="Nome Completo">
+                <input type="text" id="RGouCPF-cadastro" placeholder="RG/CPF">
+                <input type="text" id="Veiculo-cadastro" placeholder="Veiculo">
+                <input type="text" id="Placa-cadastro" placeholder="Placa">
+                <input type="text" id="telefone-cadastro" placeholder="Telefone">
+                <input type="text" id="logradouro-cadastro" placeholder="Logradouro">
+                <input type="text" id="Numero-cadastro" placeholder="Número">
+                <input type="text" id="CEP" placeholder="CEP">
+                <input type="text" id="dadosbancarios-cadastro" placeholder="Dados Bancários">
+                <button id="adicionar-cadastro">Adicionar Cadastro</button>
+            </div>
+            <table id="cadastro-table">
+                <thead>
+                    <tr>
+                        <th>Nome Completo</th>
+                        <th>RG/CPF</th>
+                        <th>Veiculo</th>
+                        <th>Placa</th>
+                        <th>Telefone</th>
+                        <th>Logradouro</th>
+                        <th>Número</th>
+                        <th>CEP</th>
+                        <th>Dados Bancários</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="financeiro">
+            <h2>Financeiro</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-financeiro" class="search-bar" placeholder="Pesquisar nesta aba..." />
+                <input type="date" id="data-inicial-financeiro" class="date-input" placeholder="Data Inicial" />
+                <input type="date" id="data-final-financeiro" class="date-input" placeholder="Data Final" />
+            </div>
+            <div class="input-group">
+                <input type="text" id="descricao-financeiro" placeholder="Descrição">
+                <input type="number" id="valor-financeiro" placeholder="Valor">
+                <button id="adicionar-registro-financeiro">Adicionar Registro Financeiro</button>
+            </div>
+            <table id="financeiro-table">
+                <thead>
+                    <tr>
+                        <th>Protocolo</th>
+                        <th>Motorista</th>
+                        <th>Data</th>
+                        <th>Valor</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="fretes">
+            <h2>Fretes</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-fretes" class="search-bar" placeholder="Pesquisar na tabela de fretes..." />
+            </div>
+            <div class="input-group">
+                <input type="text" id="chave-acesso-frete" placeholder="Digite a Chave de Acesso">
+                <input type="text" id="transporte-frete" placeholder="Transporte">
+                <input type="text" id="destinatario-frete" placeholder="Destinatário">
+                <button id="adicionar-frete">Adicionar Frete</button>
+            </div>
+            <table id="fretes-table">
+                <thead>
+                    <tr>
+                        <th>REN</th>
+                        <th>ROTAS</th>
+                        <th>DUCATO</th>
+                        <th>ZN3/4</th>
+                        <th>TOCO</th>
+                        <th>TRUCK</th>
+                        <th>PICAP</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="devolucao">
+            <h2>Devolução</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="search-devolucao" class="search-bar" placeholder="Pesquisar nesta aba..." />
+            </div>
+            <table id="devolucao-table">
+                <thead>
+                    <tr>
+                        <th>Chave NF-e</th>
+                        <th>Carga</th>
+                        <th>Nota Fiscal</th>
+                        <th>Destinatário</th>
+                        <th>Data</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Seção de Despesas -->
+        <div id="despesas">
+            <h2>Despesas</h2>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="descricao-despesa" placeholder="Descrição" class="search-bar" />
+                <input type="text" id="motorista-despesa" placeholder="Motorista" class="search-bar" />
+                <input type="number" id="valor-despesa" placeholder="Valor" class="search-bar" />
+                <button id="adicionar-despesa">Adicionar Despesa</button>
+            </div>
+            <table id="despesas-table">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Motorista</th>
+                        <th>Valor</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão adicionadas dinamicamente -->
+                </tbody>
+            </table>
+        </div>            
+    </section>
+    <audio id="alert-sound" src="alert.mp3" preload="auto"></audio>
+    <script>
+        // Exibir nome do usuário logado
+        document.getElementById('username-display').textContent = localStorage.getItem('username');
+
+        // Lógica de logout
+        document.getElementById('logout-button').addEventListener('click', () => {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html'; // Redireciona para a tela de login
+        });
+
+        function saveTableData(tableId, storageKey) {
+            const tableBody = document.getElementById(tableId).querySelector('tbody');
+            const rows = tableBody.getElementsByTagName('tr');
+            const data = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const rowData = [];
+                for (let j = 0; j < cells.length - 1; j++) { // Ignora a última célula (Ação)
+                    rowData.push(cells[j].textContent);
+                }
+                data.push(rowData);
+            }
+
+            localStorage.setItem(storageKey, JSON.stringify(data));
+        }
+
+        function loadTableData(tableId, storageKey) {
+            const data = JSON.parse(localStorage.getItem(storageKey)) || [];
+            const tableBody = document.getElementById(tableId).querySelector('tbody');
+            tableBody.innerHTML = ''; // Limpa a tabela antes de carregar
+
+            data.forEach(rowData => {
+                const row = tableBody.insertRow();
+                rowData.forEach(cellData => {
+                    const cell = row.insertCell();
+                    cell.textContent = cellData;
+                });
+                const deleteCell = row.insertCell();
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-row';
+                deleteCell.appendChild(deleteButton);
+            });
+        }
+
+        // Save and load functions for each section
+        function saveAllData() {
+            saveTableData('entrada-table', 'dadosEntrada');
+            saveTableData('carregamento-table', 'dadosCarregamento');
+            saveTableData('inventario-table', 'dadosInventario');
+            saveTableData('retorno-table', 'dadosRetorno');
+            saveTableData('historico-table', 'dadosHistorico');
+            saveTableData('adicional-table', 'dadosAdicional');
+            saveTableData('protocolo-tabela', 'dadosProtocolo');
+            saveTableData('cadastro-table', 'dadosCadastro');
+            saveTableData('financeiro-table', 'dadosFinanceiro');
+            saveTableData('fretes-table', 'dadosFretes');
+            saveTableData('devolucao-table', 'dadosDevolucao');
+            saveTableData('despesas-table', 'dadosDespesas');
+        }
+
+        function loadAllData() {
+            loadTableData('entrada-table', 'dadosEntrada');
+            loadTableData('carregamento-table', 'dadosCarregamento');
+            loadTableData('inventario-table', 'dadosInventario');
+            loadTableData('retorno-table', 'dadosRetorno');
+            loadTableData('historico-table', 'dadosHistorico');
+            loadTableData('adicional-table', 'dadosAdicional');
+            loadTableData('protocolo-tabela', 'dadosProtocolo');
+            loadTableData('cadastro-table', 'dadosCadastro');
+            loadTableData('financeiro-table', 'dadosFinanceiro');
+            loadTableData('fretes-table', 'dadosFretes');
+            loadTableData('devolucao-table', 'dadosDevolucao');
+            loadTableData('despesas-table', 'dadosDespesas');
+        }
+
+        // Execute loadAllData on window load
+        window.onload = function() {
+            loadAllData();
+            document.getElementById('username-display').textContent = localStorage.getItem('username');
+        };
+
+        // Gerencia as abas
+        const tabs = document.querySelectorAll('nav a');
+        const sections = document.querySelectorAll('section > div');
+
+        tabs.forEach((tab) => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // Remove a classe 'active' das abas e seções
+                tabs.forEach((t) => t.classList.remove('active'));
+                sections.forEach((s) => s.classList.remove('active'));
+
+                // Adiciona a classe 'active' na aba e seção clicada
+                tab.classList.add('active');
+                const targetId = tab.id.replace('tab-', '');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Função para adicionar entrada na aba de Entrada
+        document.getElementById('adicionar-entrada').addEventListener('click', async function() {
+            const chaveAcesso = document.getElementById('chave-acesso').value.trim();
+
+            if (chaveAcesso !== '') {
+                // Referencia o corpo da tabela de entrada
+                const entradaTableBody = document.getElementById('entrada-table').querySelector('tbody');
+                
+                // Procurando dados da base de dados para preencher as outras colunas
+                const dadosTabela = document.getElementById('dados-tabela').querySelector('tbody');
+                const rows = dadosTabela.getElementsByTagName('tr');
+                let numeroNF = '', transporte = '', destinatario = '';
+
+                for (let i = 0; i < rows.length; i++) {
+                    const cells = rows[i].getElementsByTagName('td');
+                    if (cells[0].textContent === chaveAcesso) {
+                        numeroNF = cells[1].textContent;
+                        transporte = cells[2].textContent;
+                        destinatario = cells[3].textContent;
+                        break;
+                    }
+                }
+                
+                // Adiciona a entrada na tabela de entrada
+                const entradaRow = entradaTableBody.insertRow();
+                entradaRow.innerHTML = `
+                    <td>${chaveAcesso}</td>
+                    <td>${numeroNF}</td>
+                    <td>${transporte}</td>
+                    <td>${destinatario}</td>
+                    <td><button class="delete-row">Excluir</button></td>
+                `;
+                
+                // Adiciona a entrada na tabela de Inventário
+                const inventarioTableBody = document.getElementById('inventario-table').querySelector('tbody');
+                const inventarioRow = inventarioTableBody.insertRow();
+                inventarioRow.innerHTML = `
+                    <td>${chaveAcesso}</td>
+                    <td>${numeroNF}</td>
+                    <td>${transporte}</td>
+                    <td>${destinatario}</td>
+                `;
+                
+                // Limpar campo de entrada
+                document.getElementById('chave-acesso').value = '';
+
+                // Salvar dados após adicionar
+                saveAllData();
+            } else {
+                alert("Por favor, preencha a Chave de Acesso.");
+            }
+        });
+
+        // Adiciona a lógica para excluir a linha quando o botão for clicado
+        document.getElementById('entrada-table').addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-row')) {
+                const row = e.target.closest('tr'); // Encontra a linha mais próxima
+                row.remove(); // Remove a linha
+                
+                // Salvar dados após exclusão
+                saveAllData();
+            }
+        });
+
+        // Função para adicionar saída na aba de Carregamento
+        document.getElementById('adicionar-saida').addEventListener('click', function() {
+            const chaveAcesso = document.getElementById('chave-acesso-carregamento').value.trim();
+            const motorista = prompt("Digite o nome do motorista:");
+
+            if (chaveAcesso === '' || motorista === '') {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            // Procurando dados da base de dados para preencher as outras colunas
+            const dadosTabela = document.getElementById('dados-tabela').querySelector('tbody');
+            const rows = dadosTabela.getElementsByTagName('tr');
+            let transporte = '', destinatario = '';
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                if (cells[0].textContent === chaveAcesso) {
+                    transporte = cells[2].textContent; // Transporte
+                    destinatario = cells[3].textContent; // Destinatário
+                    break;
+                }
+            }
+
+            // Verifica se a chave de acesso foi encontrada
+            if (transporte === '' && destinatario === '') {
+                alert("Chave de acesso não encontrada. Verifique e tente novamente.");
+                return;
+            }
+
+            // Data de saída será a data atual
+            const dataSaida = new Date().toLocaleDateString();
+
+            // Adiciona a saída na tabela de Carregamento
+            const carregamentoTableBody = document.getElementById('carregamento-table').querySelector('tbody');
+            const carregamentoRow = carregamentoTableBody.insertRow();
+            carregamentoRow.innerHTML = `
+                <td>${chaveAcesso}</td>
+                <td>${transporte}</td>
+                <td>${motorista}</td>
+                <td>${destinatario}</td>
+                <td>${dataSaida}</td>
+            `;
+
+            // Remove a entrada da tabela de Inventário
+            const inventarioTableBody = document.getElementById('inventario-table').querySelector('tbody');
+            const inventarioRows = inventarioTableBody.getElementsByTagName('tr');
+
+            for (let i = 0; i < inventarioRows.length; i++) {
+                const cells = inventarioRows[i].getElementsByTagName('td');
+                if (cells[0].textContent === chaveAcesso) {
+                    inventarioTableBody.deleteRow(i);
+                    break;
+                }
+            }
+
+            // Adiciona a entrada na tabela de Histórico
+            const historicoTableBody = document.getElementById('historico-table').querySelector('tbody');
+            const historicoRow = historicoTableBody.insertRow();
+            historicoRow.innerHTML = `
+                <td>${chaveAcesso}</td>
+                <td>${transporte}</td>
+                <td>${motorista}</td>
+                <td>${destinatario}</td>
+                <td>${dataSaida}</td>
+                <td></td>
+            `;
+
+            // Limpa os campos de Chave de Acesso e Motorista
+            document.getElementById('chave-acesso-carregamento').value = '';
+
+            // Salvar dados após adicionar saída
+            saveAllData();
+        });
+
+        // Função para filtrar as tabelas de cada aba
+        function filterTable(searchInput, tableId) {
+            const input = document.getElementById(searchInput);
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let rowContainsSearchTerm = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    const cell = cells[j];
+                    if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
+                        rowContainsSearchTerm = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = rowContainsSearchTerm ? "" : "none";
+            }
+        }
+
+        // Adiciona os eventos de pesquisa em cada aba
+        document.getElementById('search-entrada').addEventListener('input', function() {
+            filterTable('search-entrada', 'entrada-table');
+        });
+
+        document.getElementById('search-carregamento').addEventListener('input', function() {
+            filterTable('search-carregamento', 'carregamento-table');
+        });
+
+        document.getElementById('search-inventario').addEventListener('input', function() {
+            filterTable('search-inventario', 'inventario-table');
+        });
+
+        document.getElementById('search-retorno').addEventListener('input', function() {
+            filterTable('search-retorno', 'retorno-table');
+        });
+
+        document.getElementById('search-historico').addEventListener('input', function() {
+            filterTable('search-historico', 'historico-table');
+        });
+
+        document.getElementById('search-base-dados').addEventListener('input', function() {
+            filterTable('search-base-dados', 'dados-tabela');
+        });
+
+        document.getElementById('search-adicional').addEventListener('input', function() {
+            filterTable('search-adicional', 'adicional-table');
+        });
+
+        document.getElementById('search-protocolo').addEventListener('input', function() {
+            filterTable('search-protocolo', 'protocolo-tabela');
+        });
+
+        document.getElementById('search-cadastro').addEventListener('input', function() {
+            filterTable('search-cadastro', 'cadastro-table');
+        });
+
+        document.getElementById('search-financeiro').addEventListener('input', function() {
+            filterTable('search-financeiro', 'financeiro-table');
+        });
+
+        document.getElementById('search-fretes').addEventListener('input', function() {
+            filterTable('search-fretes', 'fretes-table');
+        });
+
+        document.getElementById('search-devolucao').addEventListener('input', function() {
+            filterTable('search-devolucao', 'devolucao-table');
+        });
+
+        // Carregar dados ao abrir a página
+        window.onload = function() {
+            loadAllData();
+            document.getElementById('username-display').textContent = localStorage.getItem('username');
+        };
+
+        // Função para carregar dados do Local Storage
+        function carregarDados() {
+            const dadosTabela = document.getElementById('dados-tabela').querySelector('tbody');
+            dadosTabela.innerHTML = ''; // Limpa a tabela existente
+
+            // Carrega os dados salvos do Local Storage
+            const dadosSalvos = JSON.parse(localStorage.getItem('dadosPlanilha')) || [];
+
+            // Adiciona cada linha ao corpo da tabela
+            dadosSalvos.forEach(row => {
+                const newRow = dadosTabela.insertRow();
+                newRow.insertCell(0).textContent = row[0] || ''; // Chave de Acesso
+                newRow.insertCell(1).textContent = row[1] || ''; // Número de NF-e
+                newRow.insertCell(2).textContent = row[2] || ''; // Transporte
+                newRow.insertCell(3).textContent = row[3] || ''; // Destinatário
+                newRow.insertCell(4).textContent = row[4] || ''; // Previsão de Entrega
+                newRow.insertCell(5).textContent = row[5] || ''; // Telefone
+                newRow.insertCell(6).textContent = row[6] || ''; // Peso
+                newRow.insertCell(7).textContent = row[7] || ''; // Cidade
+            });
+        }
+
+        // Modifica a função para importar dados do Excel
+        document.getElementById('carregar-planilha').addEventListener('click', () => {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                document.getElementById('upload-message').textContent = 'Nenhum arquivo selecionado.';
+                document.getElementById('upload-message').style.color = 'red';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Altere aqui se precisar de uma planilha específica
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+
+                // Carrega os dados existentes do Local Storage
+                const dadosSalvos = JSON.parse(localStorage.getItem('dadosPlanilha')) || [];
+
+                // Adiciona os novos dados à lista existente
+                json.forEach((row, index) => {
+                    if (index === 0) return; // Ignora o cabeçalho
+                    if (row.length < 8) {
+                        console.warn('Linha inválida, ignorando:', row);
+                        return; // Ignora linhas inválidas
+                    }
+                    dadosSalvos.push(row); // Adiciona a nova linha
+                });
+
+                // Salva os dados atualizados no Local Storage
+                localStorage.setItem('dadosPlanilha', JSON.stringify(dadosSalvos));
+
+                // Atualiza a tabela com os dados salvos
+                carregarDados();
+
+                document.getElementById('upload-message').textContent = 'Arquivo carregado com sucesso!';
+                document.getElementById('upload-message').style.color = 'green';
+            };
+
+            reader.onerror = (event) => {
+                document.getElementById('upload-message').textContent = 'Erro ao ler o arquivo.';
+                document.getElementById('upload-message').style.color = 'red';
+            };
+
+            // Lê o arquivo como ArrayBuffer
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Lógica para adicionar retorno na aba de Retorno
+        document.getElementById('adicionar-retono').addEventListener('click', function() {
+            const chaveAcesso = document.getElementById('chave-acesso-retorno').value.trim();
+        
+            if (chaveAcesso === '') {
+                alert("Por favor, preencha a Chave de Acesso.");
+                return;
+            }
+        
+            // Procurando dados da base de dados para preencher as outras colunas
+            const dadosTabela = document.getElementById('dados-tabela').querySelector('tbody');
+            const rowsDados = dadosTabela.getElementsByTagName('tr');
+            let transporte = '', numeroNF = '', destinatario = '';
+        
+            for (let i = 0; i < rowsDados.length; i++) {
+                const cells = rowsDados[i].getElementsByTagName('td');
+                if (cells[0].textContent === chaveAcesso) {
+                    numeroNF = cells[1].textContent;
+                    transporte = cells[2].textContent;
+                    destinatario = cells[3].textContent;
+                    break;
+                }
+            }
+        
+            // Procurando dados da tabela de carregamento para preencher motorista e data de saída
+            const carregamentoTableBody = document.getElementById('carregamento-table').querySelector('tbody');
+            const rowsCarregamento = carregamentoTableBody.getElementsByTagName('tr');
+            let dataSaida = '', motorista = '';
+        
+            for (let i = rowsCarregamento.length - 1; i >= 0; i--) { // Busca a informação mais recente
+                const cells = rowsCarregamento[i].getElementsByTagName('td');
+                if (cells[0].textContent === chaveAcesso) {
+                    dataSaida = cells[4].textContent; // Data de Saída
+                    motorista = cells[2].textContent; // Motorista
+                    break;
+                }
+            }
+        
+            // Verifica se a chave de acesso foi encontrada
+            if (transporte === '' && numeroNF === '' && destinatario === '') {
+                alert("Chave de acesso não encontrada nos dados. Verifique e tente novamente.");
+                return;
+            }
+        
+            // Adiciona o retorno na tabela de Retorno
+            const retornoTableBody = document.getElementById('retorno-table').querySelector('tbody');
+            const retornoRow = retornoTableBody.insertRow();
+            retornoRow.innerHTML = `
+                <td>${chaveAcesso}</td>
+                <td>${transporte}</td>
+                <td>${numeroNF}</td>
+                <td>${destinatario}</td>
+                <td>${dataSaida}</td>
+                <td>${motorista}</td>
+                <td>
+                    <button class="status-button" data-status="Entregue">Entregue</button>
+                    <button class="status-button" data-status="Devolução">Devolução</button>
+                    <button class="status-button" data-status="Ocorrência">Ocorrência</button>
+                    <button class="status-button" data-status="Adicional">Adicional</button>
+                </td>
+            `;
+        
+            // Limpar campo de entrada
+            document.getElementById('chave-acesso-retorno').value = '';
+
+            // Salvar dados após adicionar retorno
+            saveAllData();
+        });
+
+        // Evento para gerenciar os botões de status
+        function handleStatusButtonClick(e) {
+            if (e.target.classList.contains('status-button')) {
+                const status = e.target.dataset.status;
+                const row = e.target.closest('tr'); // Encontra a linha mais próxima
+
+                // Busca a linha correspondente na aba Histórico
+                const historicoTableBody = document.getElementById('historico-table').querySelector('tbody');
+                const historicoRows = historicoTableBody.getElementsByTagName('tr');
+
+                let foundRow = null;
+                for (let i = 0; i < historicoRows.length; i++) {
+                    const cells = historicoRows[i].getElementsByTagName('td');
+                    // Compara Chave NF-e e Motorista
+                    if (cells[0].textContent === row.cells[0].textContent &&
+                        cells[2].textContent === row.cells[5].textContent) { // Comparar Motorista
+                        foundRow = historicoRows[i];
+                        break;
+                    }
+                }
+
+                if (foundRow) {
+                    // Atualiza o status na linha correspondente da aba Histórico
+                    foundRow.cells[5].textContent = `Status: ${status}`; // Atualiza o status na coluna
+                    foundRow.className = getBlinkingClass(status); // Aplica a classe de piscar
+                } else {
+                    // Se não encontrou, ainda assim pode adicionar na aba Histórico
+                    const historicoRow = historicoTableBody.insertRow();
+                    historicoRow.innerHTML = `
+                        <td>${row.cells[0].textContent}</td>
+                        <td>${row.cells[1].textContent}</td>
+                        <td>${row.cells[5].textContent}</td>
+                        <td>${row.cells[3].textContent}</td>
+                        <td>${row.cells[4].textContent}</td>
+                        <td class="${getBlinkingClass(status)}">Status: ${status}</td>
+                    `;
+                }
+
+                alert(`Status alterado para: ${status}`);
+                
+                // Salvar dados após alteração de status
+                saveAllData();
+            }
+        }
+
+        // Adiciona o listener para o evento de clique na tabela de Retorno
+        document.getElementById('retorno-table').addEventListener('click', handleStatusButtonClick);
+
+        // Adiciona o listener para o evento de clique na tabela de Histórico
+        document.getElementById('historico-table').addEventListener('click', handleStatusButtonClick);
+
+        // Função para obter a classe de piscar baseado no status
+        function getBlinkingClass(status) {
+            switch (status) {
+                case 'Entregue':
+                    return 'blinking-green';
+                case 'Devolução':
+                    return 'blinking-red';
+                case 'Ocorrência':
+                    return 'blinking-yellow';
+                case 'Adicional':
+                    return 'blinking-blue';
+                default:
+                    return '';
+            }
+        }
+
+        // Adiciona a lógica para excluir a linha quando o botão for clicado na aba Devolução
+        document.getElementById('devolucao-table').addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-row')) {
+                const row = e.target.closest('tr'); // Encontra a linha mais próxima
+                row.remove(); // Remove a linha
+
+                // Salvar dados após exclusão
+                saveAllData();
+            }
+        });
+
+        // Função para verificar as datas na aba Adicional
+        function verificarDatasAdicional() {
+            const adicionalTableBody = document.getElementById('adicional-table').querySelector('tbody');
+            const rows = adicionalTableBody.getElementsByTagName('tr');
+            const alertSound = document.getElementById('alert-sound');
+
+            let alertTriggered = false; // Para evitar múltiplos alertas
+
+            for (let i = 0; i < rows.length; i++) {
+                const dateCell = rows[i].getElementsByTagName('td')[4].textContent; // Data na coluna 4
+                const inputDate = new Date(dateCell.split('/').reverse().join('-')); // Formato dd/mm/yyyy
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0); // Reseta a hora para comparação
+
+                if (inputDate < currentDate) {
+                    rows[i].classList.add('blinking-red'); // Adiciona a classe de piscar em vermelho
+                    if (!alertTriggered) {
+                        alertSound.play(); // Toca o som de alerta
+                        alertTriggered = true; // Evitar tocar o som novamente
+                    }
+                }
+            }
+        }
+
+        // Função para adicionar cadastro na aba Cadastro
+        document.getElementById('adicionar-cadastro').addEventListener('click', function() {
+            const nome = document.getElementById('nome-cadastro').value.trim();
+            const RGouCPF = document.getElementById('RGouCPF-cadastro').value.trim();
+            const veiculo = document.getElementById('Veiculo-cadastro').value.trim();
+            const placa = document.getElementById('Placa-cadastro').value.trim();
+            const telefone = document.getElementById('telefone-cadastro').value.trim();
+            const logradouro = document.getElementById('logradouro-cadastro').value.trim();
+            const numero = document.getElementById('Numero-cadastro').value.trim();
+            const cep = document.getElementById('CEP').value.trim();
+            const dadosBancarios = document.getElementById('dadosbancarios-cadastro').value.trim();
+
+            if (nome === '' || RGouCPF === '' || veiculo === '' || placa === '' || telefone === '' || logradouro === '' || numero === '' || cep === '' || dadosBancarios === '') {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            const cadastroTableBody = document.getElementById('cadastro-table').querySelector('tbody');
+            const cadastroRow = cadastroTableBody.insertRow();
+            cadastroRow.innerHTML = `
+                <td>${nome}</td>
+                <td>${RGouCPF}</td>
+                <td>${veiculo}</td>
+                <td>${placa}</td>
+                <td>${telefone}</td>
+                <td>${logradouro}</td>
+                <td>${numero}</td>
+                <td>${cep}</td>
+                <td>${dadosBancarios}</td>
+                <td><button class="delete-row">Excluir</button></td>
+            `;
+
+            // Limpar campos de entrada
+            document.getElementById('nome-cadastro').value = '';
+            document.getElementById('RGouCPF-cadastro').value = '';
+            document.getElementById('Veiculo-cadastro').value = '';
+            document.getElementById('Placa-cadastro').value = '';
+            document.getElementById('telefone-cadastro').value = '';
+            document.getElementById('logradouro-cadastro').value = '';
+            document.getElementById('Numero-cadastro').value = '';
+            document.getElementById('CEP').value = '';
+            document.getElementById('dadosbancarios-cadastro').value = '';
+
+            // Salvar dados após adicionar
+            saveAllData();
+        });
+
+        // Adiciona a lógica para excluir a linha quando o botão for clicado na aba Cadastro
+        document.getElementById('cadastro-table').addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-row')) {
+                const row = e.target.closest('tr'); // Encontra a linha mais próxima
+                row.remove(); // Remove a linha
+
+                // Salvar dados após exclusão
+                saveAllData();
+            }
+        });
+
+        // Função para adicionar registros financeiros na aba Financeiro
+        document.getElementById('adicionar-registro-financeiro').addEventListener('click', function() {
+            const descricao = document.getElementById('descricao-financeiro').value.trim();
+            const valor = document.getElementById('valor-financeiro').value.trim();
+
+            if (descricao === '' || valor === '') {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            const financeiroTableBody = document.getElementById('financeiro-table').querySelector('tbody');
+            const financeiroRow = financeiroTableBody.insertRow();
+            financeiroRow.innerHTML = `
+                <td>${descricao}</td>
+                <td>${valor}</td>
+                <td><button class="delete-row">Excluir</button></td>
+            `;
+
+            // Limpar campos de entrada
+            document.getElementById('descricao-financeiro').value = '';
+            document.getElementById('valor-financeiro').value = '';
+
+            // Salvar dados após adicionar
+            saveAllData();
+        });
+
+        // Adiciona a lógica para excluir a linha quando o botão for clicado na aba Financeiro
+        document.getElementById('financeiro-table').addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-row')) {
+                const row = e.target.closest('tr'); // Encontra a linha mais próxima
+                row.remove(); // Remove a linha
+
+                // Salvar dados após exclusão
+                saveAllData();
+            }
+        });
+
+        // Função para adicionar frete na aba Fretes
+        document.getElementById('adicionar-frete').addEventListener('click', function() {
+            const chaveAcesso = document.getElementById('chave-acesso-frete').value.trim();
+            const transporte = document.getElementById('transporte-frete').value.trim();
+            const destinatario = document.getElementById('destinatario-frete').value.trim();
+
+            if (chaveAcesso === '' || transporte === '' || destinatario === '') {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            const fretesTableBody = document.getElementById('fretes-table').querySelector('tbody');
+            const freteRow = fretesTableBody.insertRow();
+            freteRow.innerHTML = `
+                <td>${chaveAcesso}</td>
+                <td>${transporte}</td>
+                <td>${destinatario}</td>
+                <td><button class="delete-row">Excluir</button></td>
+            `;
+
+            // Limpar campos de entrada
+            document.getElementById('chave-acesso-frete').value = '';
+            document.getElementById('transporte-frete').value = '';
+            document.getElementById('destinatario-frete').value = '';
+
+            // Salvar dados após adicionar
+            saveAllData();
+        });
+
+        // Adiciona a lógica para excluir a linha quando o botão for clicado na aba Fretes
+        document.getElementById('fretes-table').addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-row')) {
+                const row = e.target.closest('tr'); // Encontra a linha mais próxima
+                row.remove(); // Remove a linha
+
+                // Salvar dados após exclusão
+                saveAllData();
+            }
+        });
+    </script>
+</body>
+</html>
